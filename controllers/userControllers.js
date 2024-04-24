@@ -15,6 +15,16 @@ class UserController {
         console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ test ☢ error:', error)
         }
     }
+
+    async registrationForm (req, res) {
+        try {
+            const {username, firtsname, lastname, age, avatar} = req.body;
+            console.log('avatar --- >>', avatar);
+            res.json({status: 'acept'});
+        } catch (error) {
+            console.log('error reg form: ', error);
+        }
+    }
 };
 
 module.exports = new UserController();

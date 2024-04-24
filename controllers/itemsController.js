@@ -45,6 +45,22 @@ class ItemsController {
             console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ toggleStateFavorite ☢ error:', error)
         }
     }
+
+    async addItem (req, res) {
+        try {
+            const {
+                itemName, 
+                category, 
+                description, 
+                price, 
+                photo 
+            } = req.body;
+            console.log('itemname --- >>> ', itemName);
+            res.json({status: "add item success"})
+        } catch (error) {
+            console.log("add item error", error);
+        }
+    }
 }
 
 module.exports = new ItemsController();
