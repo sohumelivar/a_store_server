@@ -2,7 +2,6 @@ class ItemsController {
     async getItems (req, res) {
         try {
             const headers = req.get('Authorization');
-            console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ getItem ☢ headers:', headers)
             const itemsArray = [];
             for (let i = 1; i <= 20; i++) {
                 itemsArray.push({

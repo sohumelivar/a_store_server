@@ -4,12 +4,20 @@ const { DataTypes } = require('sequelize');
 const User = sequelize.define('user', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
     username: { type: DataTypes.STRING, unique: true },
+    email: { type: DataTypes.STRING, unique: true},
+    isActivated: { type: DataTypes.BOOLEAN, defaultValue: false},
+    activationLink: { type: DataTypes.STRING },
     password: { type: DataTypes.STRING, allowNull: false },
     first: { type: DataTypes.STRING },
     lastname: { type: DataTypes.STRING },
     age: { type: DataTypes.INTEGER },
     avatar: { type: DataTypes.STRING}
 });
+
+const Token = sequelize.define('token', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    refreshToken: { type: DataTypes.STRING, allowNull: false },
+})
 
 const Items = sequelize.define('items', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
@@ -38,6 +46,13 @@ OnEdit.belongsTo(User);
 OnEdit.belongsTo(Items);
 User.hasMany(OnEdit);
 Items.hasMany(OnEdit);
+User.hasOne(Token, {
+    foreignKey: 'userId',
+});
+Token.belongsTo(User, {
+    foreignKey: 'userId',
+});
 
 
-module.exports = { User, Items, Favorite, OnEdit };
+
+module.exports = { User, Items, Favorite, OnEdit, Token };

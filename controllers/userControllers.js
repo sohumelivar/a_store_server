@@ -1,12 +1,69 @@
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const { User } = require('../models/models');
+const userService = require('../service/user-service');
+
 
 class UserController {
-    async test (req, res) {
+    async registrationForm (req, res, next) {
         try {
-          const { username, password } = req.body;
+            const {username, firtsname, email, password, lastname, age, avatar} = req.body;
+            const userData = await userService.registration(username, email, password);
+            res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+            return res.json(userData);
+        } catch (error) {
+            console.log('error reg form: ', error);
+        }
+    }
+
+    async login (req, res) {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async logout (req, res) {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async activate (req, res) {
+        try {
+            console.log('tut --------------------- >>>>>>>>>>>>');
+            const activationLink = req.params.link;
+            console.log("🚀 ~ UserController ~ activate ~ activationLink:", activationLink)
+            await userService.activate(activationLink);
+            return res.redirect(process.env.CLIENT_URL);
+        } catch (error) {
+            console.log("🚀 ~ UserController ~ activate ~ error:", error)
+        }
+    }
+
+    async refresh (req, res) {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+    async users (req, res) {
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
+
+        async test (req, res) {
+        try {
+          const { username, email, password } = req.body;
+          console.log("🚀 ~ UserController ~ test ~ { username, email, password }:", { username, email, password })
           const user = await User.findOne({where: {username}});
+          console.log("🚀 ~ UserController ~ test ~ user:", user)
           const headers = req.get('Authorization');
           setTimeout(() => {
               return res.json({id:1, username: 'test'});
@@ -15,16 +72,7 @@ class UserController {
         console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ test ☢ error:', error)
         }
     }
-
-    async registrationForm (req, res) {
-        try {
-            const {username, firtsname, lastname, age, avatar} = req.body;
-            console.log('avatar --- >>', avatar);
-            res.json({status: 'acept'});
-        } catch (error) {
-            console.log('error reg form: ', error);
-        }
-    }
+    
 };
 
 module.exports = new UserController();
