@@ -6,7 +6,7 @@ const filterEmptyFields = require('../utils/filterEmptyFields');
 const registrationForm = async (req, res, next) => {
     try {
         const filteredData = filterEmptyFields(req.body);
-        if (!filteredData) return res.json({ error: 'необходимо заполнить данные' })
+        if (!filteredData.filledData) return res.json({ error: true, emptyFields: filteredData.necessaryInputs })
         const userData = await userService.registration(filteredData);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
