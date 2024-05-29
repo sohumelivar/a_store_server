@@ -7,7 +7,7 @@ const registrationForm = async (req, res, next) => {
     try {
         const filteredData = filterEmptyFields(req.body);
         if (!filteredData.filledData) return res.json({ error: true, emptyFields: filteredData.necessaryInputs })
-        const userData = await userService.registration(filteredData);
+        const userData = await userService.registration(filteredData.userData);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
     } catch (error) {
