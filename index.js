@@ -15,7 +15,9 @@ app.use(cookieParser());
 
 app.use(cors({
     credentials: true,
-    origin: process.env.CLIENT_URL
+    origin: process.env.CLIENT_URL,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], 
+    allowedHeaders: ['Content-Type', 'Authorization'] 
 }));
 
 app.use('/images', express.static(path.join(__dirname, 'images')));
@@ -26,6 +28,7 @@ const start = async () => {
     try {
         await sequelize.authenticate();
         await sequelize.sync();
+        // app.listen(PORT, '0.0.0.0', () => console.log(`server started on port: ${PORT}`));
         app.listen(PORT, () => console.log(`server started on PORT: ${PORT}`));
     } catch (error) {
         console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ start ☢ error:', error)        

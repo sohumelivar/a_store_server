@@ -1,7 +1,6 @@
 const filterEmptyFields = (data) => {
     const userData = Object.fromEntries(Object.entries(data).filter(([key, value]) => value));
     if (!userData.email || !userData.username || !userData.password) {
-
         return {
             filledData: false,
             necessaryInputs: {
@@ -11,7 +10,10 @@ const filterEmptyFields = (data) => {
             }
         };
     }
-    return userData;
+    return {
+        filledData: true,
+        userData
+    };
 };
 
 module.exports = filterEmptyFields;
