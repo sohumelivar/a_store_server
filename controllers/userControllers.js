@@ -3,7 +3,7 @@ const userService = require('../service/user-service');
 const filterEmptyFields = require('../utils/filterEmptyFields');
 
 
-const registrationForm = async (req, res, next) => {
+const registration = async (req, res, next) => {
     try {
         const filteredData = filterEmptyFields(req.body);
         if (!filteredData.filledData) return res.json({ error: true, emptyFields: filteredData.necessaryInputs })
@@ -73,7 +73,7 @@ const test = async (req, res) => {
 }
 
 module.exports = {
-    registrationForm,
+    registration,
     login,
     logout,
     activate,
