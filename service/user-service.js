@@ -36,8 +36,28 @@ const activate = async (activationLink) => {
     }
 }
 
+const login = async (username, password) => {
+    try {
+        const user = await User.findOne({where: {username}});
+        if (!user) {
+            throw new Error('not user');
+        }
+        const isPassEquals = await bcrypt.compare(password, user.password);
+        if (!isPassEquals) {
+            throw new Error ('wrong password');
+        }
+        const userDto = new UserDto(user);
+        const tokens = tokenService.generateTokens({...userDto});
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+        return { ...tokens, user: userDto };
+    } catch (error) {
+        console.log("🚀 ~ UserService ~ login ~ error:", error)
+    }
+}
+
 module.exports = {
     registration,
     activate,
+    login,
 }
 
