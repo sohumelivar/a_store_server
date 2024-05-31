@@ -20,8 +20,18 @@ const saveToken = async (userId, refreshToken) => {
     return token;
 }
 
+const removeToken = async (refreshToken) => {
+    try {
+        const tokenData = await Token.destroy({where: {refreshToken}});
+        return tokenData;
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 module.exports = {
     generateTokens,
     saveToken,
+    removeToken,
 }
