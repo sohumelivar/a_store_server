@@ -44,7 +44,7 @@ const login = async (username, password) => {
         }
         const isPassEquals = await bcrypt.compare(password, user.password);
         if (!isPassEquals) {
-            throw new Error ('wrong password');
+            throw new Error ('wrong password');   
         }
         const userDto = new UserDto(user);
         const tokens = tokenService.generateTokens({...userDto});
@@ -55,9 +55,19 @@ const login = async (username, password) => {
     }
 }
 
+const logout = async (refreshToken) => {
+    try {
+        const token = await tokenService.removeToken(refreshToken);
+        return token;
+    } catch (error) {
+        console.log("🚀 ~ UserService ~ logout ~ error:", error)
+    }
+}
+
 module.exports = {
     registration,
     activate,
     login,
+    logout,
 }
 
