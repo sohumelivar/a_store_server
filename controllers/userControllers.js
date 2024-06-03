@@ -9,7 +9,7 @@ const registration = async (req, res, next) => {
         if (!filteredData.filledData) return res.json({ error: true, emptyFields: filteredData.necessaryInputs })
         const userData = await userService.registration(filteredData.userData);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-        return res.json(userData.user);
+        return res.json(userData);
     } catch (error) {
         console.log('error reg form: ', error);
     }
@@ -20,7 +20,7 @@ const login = async (req, res) => {
         const {username, password} = req.body;
         const userData = await userService.login(username, password);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
-        return res.json(userData.user);
+        return res.json(userData);
     } catch (error) {
         console.log(error);
     }
@@ -49,17 +49,22 @@ const activate = async (req, res) => {
 
 const refresh = async (req, res) => {
     try {
-        
+        const {refreshToken} = req.cookies;
+        const userData = await userService.refresh(refreshToken);
+        if (userData.error) return res.redirect(process.env.CLIENT_URL);
+        res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+        return res.json(userData);
     } catch (error) {
-        
+        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ refresh ☢ error:', error)
     }
 }
 
 const users = async (req, res) => {
     try {
-        
+        const users = await User.findAll();
+        return res.json(users);
     } catch (error) {
-        
+        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ users ☢ error:', error)
     }
 }
 

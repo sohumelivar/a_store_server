@@ -64,10 +64,37 @@ const logout = async (refreshToken) => {
     }
 }
 
+const refresh = async (refreshToken) => {
+    try {
+        if (!refreshToken) {
+            return {
+                error: true,
+                errorMessage: 'user is not authorized',
+            }
+        }
+        const userData = tokenService.validateRefreshToken(refreshToken);
+        const tokenDB = await tokenService.findToken(refreshToken);
+        if (!userData || !tokenDB) {
+            return {
+                error: true,
+                errorMessage: 'user is not authorized',
+            } 
+        }
+        const user = await User.findOne({where: {id: userData.id}})
+        const userDto = new UserDto(user);
+        const tokens = tokenService.generateTokens({...userDto});
+        await tokenService.saveToken(userDto.id, tokens.refreshToken);
+        return { ...tokens, user: userDto };
+    } catch (error) {
+        console.log("🚀 ~ UserService ~ refresh ~ error:", error)
+    }
+}
+
 module.exports = {
     registration,
     activate,
     login,
     logout,
+    refresh,
 }
 
