@@ -41,21 +41,13 @@ const saveToken = async (userId, refreshToken) => {
 }
 
 const removeToken = async (refreshToken) => {
-    try {
         const tokenData = await Token.destroy({where: {refreshToken}});
         return tokenData;
-    } catch (error) {
-    console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ removeToken ☢ error:', error)
-    }
 }
 
 const findToken = async (refreshToken) => {
-    try {
         const tokenData = await Token.findOne({where: {refreshToken}});
         return tokenData;
-    } catch (error) {
-    console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ findToken ☢ error:', error)
-    }
 }
 
 module.exports = {

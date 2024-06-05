@@ -12,17 +12,18 @@ const registration = async (req, res, next) => {
         return res.json(userData);
     } catch (error) {
         console.log('error reg form: ', error);
+        next(error);
     }
 }
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
     try {
         const {username, password} = req.body;
         const userData = await userService.login(username, password);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
     } catch (error) {
-        console.log(error);
+        next(error);
     }
 }
 
@@ -43,7 +44,7 @@ const activate = async (req, res) => {
         await userService.activate(activationLink);
         return res.redirect(process.env.CLIENT_URL);
     } catch (error) {
-        console.log("🚀 ~ UserController ~ activate ~ error:", error)
+        next(error);
     }
 }
 
@@ -55,16 +56,16 @@ const refresh = async (req, res) => {
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
     } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ refresh ☢ error:', error)
+        next(error);
     }
 }
 
-const users = async (req, res) => {
+const users = async (req, res, next) => {
     try {
         const users = await User.findAll();
         return res.json(users);
     } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ users ☢ error:', error)
+        next(error);
     }
 }
 

@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const path = require('path');
 const router = require('./routes/index');
 const sequelize = require('./db');
+const errorMiddleware = require('./middlewares/error-middleware');
 
 const PORT = process.env.PORT || 6000;
 
@@ -23,6 +24,7 @@ app.use(cors({
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api', router);
+app.use(errorMiddleware);
 
 const start = async () => {
     try {
