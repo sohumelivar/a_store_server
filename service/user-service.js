@@ -5,9 +5,9 @@ const mailService = require('./mail-service');
 const tokenService = require('./token-service');
 const UserDto = require('../dtos/user-dto');
 const fieldChecking = require('../utils/fieldChecking');
+const ApiError = require("../exceptions/api-error");
 
 const registration = async (userData) => {
-    try {
         const check = await fieldChecking(userData);
         if (check) return check;
         const hashPassword = await bcrypt.hash(userData.password, 3);
@@ -18,76 +18,54 @@ const registration = async (userData) => {
         const tokens = tokenService.generateTokens({ ...userDto });
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
         return { ...tokens, user: userDto };
-    } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ registration ☢ error:', error)
-    }
 };
 
 const activate = async (activationLink) => {
-    try {
         const user = await User.findOne({where: {activationLink}});
         if (!user) {
-            throw new Error('Некоректная ссылка активации');
+            throw ApiError.BadRequest('Некоректная ссылка активации');
         }
         user.isActivated = true;
         await user.save();           
-    } catch (error) {
         console.log("🚀 ~ UserService ~ activate ~ error:", error)
-    }
 }
 
 const login = async (username, password) => {
-    try {
         const user = await User.findOne({where: {username}});
         if (!user) {
-            throw new Error('not user');
+            throw ApiError.BadRequest('Пользователь с таким именем не найден');
         }
         const isPassEquals = await bcrypt.compare(password, user.password);
         if (!isPassEquals) {
-            throw new Error ('wrong password');   
+            console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ login ☢ isPassEquals:', isPassEquals)
+
+            throw ApiError.BadRequest('wrong password');   
         }
         const userDto = new UserDto(user);
         const tokens = tokenService.generateTokens({...userDto});
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
         return { ...tokens, user: userDto };
-    } catch (error) {
-        console.log("🚀 ~ UserService ~ login ~ error:", error)
-    }
 }
 
 const logout = async (refreshToken) => {
-    try {
         const token = await tokenService.removeToken(refreshToken);
         return token;
-    } catch (error) {
-        console.log("🚀 ~ UserService ~ logout ~ error:", error)
-    }
 }
 
 const refresh = async (refreshToken) => {
-    try {
         if (!refreshToken) {
-            return {
-                error: true,
-                errorMessage: 'user is not authorized',
-            }
+            throw ApiError.UnauthorizedError();
         }
         const userData = tokenService.validateRefreshToken(refreshToken);
         const tokenDB = await tokenService.findToken(refreshToken);
         if (!userData || !tokenDB) {
-            return {
-                error: true,
-                errorMessage: 'user is not authorized',
-            } 
+            throw ApiError.UnauthorizedError();
         }
         const user = await User.findOne({where: {id: userData.id}})
         const userDto = new UserDto(user);
         const tokens = tokenService.generateTokens({...userDto});
         await tokenService.saveToken(userDto.id, tokens.refreshToken);
         return { ...tokens, user: userDto };
-    } catch (error) {
-        console.log("🚀 ~ UserService ~ refresh ~ error:", error)
-    }
 }
 
 module.exports = {
