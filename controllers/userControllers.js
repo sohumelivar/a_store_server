@@ -1,13 +1,17 @@
 const { User } = require('../models/models');
 const userService = require('../service/user-service');
-const filterEmptyFields = require('../utils/filterEmptyFields');
-
+const { filterEmptyFields } = require('../utils/filterEmptyFields');
+const ApiError = require('../exceptions/api-error');
+const { registrationSchema } = require('../utils/validation');
 
 const registration = async (req, res, next) => {
     try {
+        const { error } = registrationSchema.validate(req.body);
+        if (error) {
+            throw ApiError.BadRequest('Validation error', error.details);
+        }
         const filteredData = filterEmptyFields(req.body);
-        if (!filteredData.filledData) return res.json({ error: true, emptyFields: filteredData.necessaryInputs })
-        const userData = await userService.registration(filteredData.userData);
+        const userData = await userService.registration(filteredData);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
     } catch (error) {
