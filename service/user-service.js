@@ -8,8 +8,7 @@ const fieldChecking = require('../utils/fieldChecking');
 const ApiError = require("../exceptions/api-error");
 
 const registration = async (userData) => {
-        const check = await fieldChecking(userData);
-        if (check) return check;
+        await fieldChecking(userData);
         const hashPassword = await bcrypt.hash(userData.password, 3);
         const activationLink = uuid.v4();
         const user = await User.create({ ...userData, password: hashPassword, activationLink });
