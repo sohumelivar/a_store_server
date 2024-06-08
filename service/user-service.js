@@ -26,7 +26,6 @@ const activate = async (activationLink) => {
         }
         user.isActivated = true;
         await user.save();           
-        console.log("🚀 ~ UserService ~ activate ~ error:", error)
 }
 
 const login = async (username, password) => {
