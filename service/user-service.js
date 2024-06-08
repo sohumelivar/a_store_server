@@ -36,8 +36,6 @@ const login = async (username, password) => {
         }
         const isPassEquals = await bcrypt.compare(password, user.password);
         if (!isPassEquals) {
-            console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ login ☢ isPassEquals:', isPassEquals)
-
             throw ApiError.BadRequest('wrong password');   
         }
         const userDto = new UserDto(user);

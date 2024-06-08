@@ -15,7 +15,6 @@ const registration = async (req, res, next) => {
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
     } catch (error) {
-        console.log('error reg form: ', error);
         next(error);
     }
 }
@@ -42,7 +41,7 @@ const logout = async (req, res) => {
     }
 }
 
-const activate = async (req, res) => {
+const activate = async (req, res, next) => {
     try {
         const activationLink = req.params.link;
         await userService.activate(activationLink);
@@ -52,7 +51,7 @@ const activate = async (req, res) => {
     }
 }
 
-const refresh = async (req, res) => {
+const refresh = async (req, res, next) => {
     try {
         const {refreshToken} = req.cookies;
         const userData = await userService.refresh(refreshToken);
