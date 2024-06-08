@@ -11,6 +11,9 @@ const registration = async (req, res, next) => {
             throw ApiError.BadRequest('Validation error', error.details);
         }
         const filteredData = filterEmptyFields(req.body);
+        if (req.file) {
+            filteredData.avatar = req.file.filename;
+        }
         const userData = await userService.registration(filteredData);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
         return res.json(userData);
