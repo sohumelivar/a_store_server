@@ -58,7 +58,7 @@ const refresh = async (req, res, next) => {
     try {
         const {refreshToken} = req.cookies;
         const userData = await userService.refresh(refreshToken);
-        res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true})
+        res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
         return res.json(userData);
     } catch (error) {
         next(error);
@@ -77,9 +77,7 @@ const users = async (req, res, next) => {
 const test = async (req, res) => {
     try {
         const { username, email, password } = req.body;
-        console.log("🚀 ~ UserController ~ test ~ { username, email, password }:", { username, email, password })
         const user = await User.findOne({where: {username}});
-        console.log("🚀 ~ UserController ~ test ~ user:", user)
         const headers = req.get('Authorization');
         setTimeout(() => {
             return res.json({id:1, username: 'test'});
