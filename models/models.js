@@ -25,7 +25,7 @@ const Items = sequelize.define('items', {
     category: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
     price: { type: DataTypes.STRING },
-    photo: { type: DataTypes.STRING },
+    photos: { type: DataTypes.ARRAY(DataTypes.STRING) },
 });
 
 const Favorite = sequelize.define('favorite', {
