@@ -5,6 +5,20 @@ const createItem = async (newItem) => {
     return {newItem: createdItem};
 }
 
+const getItems = async (page, pageSize) => {
+    const offset = (page - 1) * pageSize;
+    const { count, rows } = await Items.findAndCountAll({
+        offset,
+        limit: pageSize,
+    });
+
+    return {
+        items: rows,
+        totalPages: Math.ceil(count / pageSize),
+    };
+};
+
 module.exports = {
     createItem,
+    getItems,
 }

@@ -2,29 +2,16 @@ const { addItemSchema } = require('../utils/validation');
 const ApiError = require('../exceptions/api-error');
 const itemService = require('../service/item-service');
 
-const getItems = async (req, res) => {
+const getItems = async (req, res, next) => {
     try {
-        res.json('getItem');
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 2;
+        const itemsData = await itemService.getItems(page, pageSize);
+        res.json(itemsData);
     } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ getItem ☢ error:', error)
+        next(error);
     }
-}
-
-const getItemWithId = async (req, res) => {
-    try {
-        res.json('ok'); 
-    } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ getItems ☢ error:', error)
-    }
-}
-
-const toggleStateFavorite = async (req, res) => {
-    try {
-        res.json('ok');
-    } catch (error) {
-        console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ toggleStateFavorite ☢ error:', error)
-    }
-}
+};
 
 const addItem = async (req, res, next) => {
     try {
@@ -55,7 +42,5 @@ const addItem = async (req, res, next) => {
 
 module.exports = {
     getItems,
-    getItemWithId,
-    toggleStateFavorite,
     addItem,
 }
