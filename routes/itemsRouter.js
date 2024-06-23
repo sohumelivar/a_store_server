@@ -6,5 +6,6 @@ const multerErrorHandler = require('../middlewares/multer-error-middleware');
 
 router.post('/addItem', uploadItemPhoto.array('photo', 5), multerErrorHandler, itemsController.addItem);
 router.get('/items', itemsController.getItems);
+router.post('/toggleFavorite', itemsController.toggleFavorite);
 
 module.exports = router;
