@@ -39,7 +39,7 @@ const addItem = async (req, res, next) => {
             const photos = req.files.map(file => file.filename);
             newItem.photos = photos;
         }
-        const createdItem = await itemService.createItem(newItem);
+        const createdItem = await itemService.createItem(newItem, userId);
         setTimeout(() => {
             res.status(201).json(createdItem);
         }, 1000);
@@ -61,8 +61,19 @@ const toggleFavorite = async (req, res, next ) => {
     }
 }
 
+const deleteItem = async (req, res, next) => {
+    try {
+        const { itemId, userId} = req.body;
+        const deletedItem = await itemService.deleteItem(itemId, userId);
+        res.json(deletedItem);
+    } catch (error) {
+        next(error)
+    }
+}
+
 module.exports = {
     getItems,
     addItem,
     toggleFavorite,
+    deleteItem,
 }
