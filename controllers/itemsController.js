@@ -35,9 +35,15 @@ const addItem = async (req, res, next) => {
             price: Number(price),
             userId: Number(userId),
         };
+        if (req.files.length === 0) {
+            throw ApiError.BadRequest('You must add a photo of the product')
+        }
         if (req.files) {
             const photos = req.files.map(file => file.filename);
             newItem.photos = photos;
+            // if(photos.length === 0) {
+            //     throw ApiError.BadRequest('You must add a photo of the product')
+            // }
         }
         const createdItem = await itemService.createItem(newItem, userId);
         setTimeout(() => {
