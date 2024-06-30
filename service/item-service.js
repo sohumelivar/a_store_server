@@ -75,10 +75,19 @@ const deleteItem = async (itemId, userId) => {
     return deleteItem;
 }
 
+const getItem = async (itemId, userId) => {
+    const item = await Items.findOne({ where: { id: itemId, userId } });
+    if (!item) {
+        throw ApiError.BadRequest('Item not found');
+    }
+    return item;
+};
+
 module.exports = {
     createItem,
     getItems,
     toggleFavorite,
     getUserItems,
     deleteItem,
+    getItem,
 }
