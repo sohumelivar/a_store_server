@@ -77,9 +77,20 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
+const getItem = async (req, res, next) => {
+    try {
+        const { itemId, userId } = req.params;
+        const item = await itemService.getItem(itemId, userId);
+        res.json(item);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getItems,
     addItem,
     toggleFavorite,
     deleteItem,
+    getItem
 }
