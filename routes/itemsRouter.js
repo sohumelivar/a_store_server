@@ -9,6 +9,7 @@ router.post('/addItem', authMiddleware, uploadItemPhoto.array('photo', 5), multe
 router.get('/items', itemsController.getItems);
 router.post('/toggleFavorite', authMiddleware, itemsController.toggleFavorite);
 router.post('/deleteItem', authMiddleware, itemsController.deleteItem);
-router.get('/getItem/:itemId/:userId?', itemsController.getItem);
+router.get('/getItem/:itemId/:userId', itemsController.getItem);
+router.put('/update/:id', itemsController.updateItem);
 
 module.exports = router;

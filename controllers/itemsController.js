@@ -41,9 +41,6 @@ const addItem = async (req, res, next) => {
         if (req.files) {
             const photos = req.files.map(file => file.filename);
             newItem.photos = photos;
-            // if(photos.length === 0) {
-            //     throw ApiError.BadRequest('You must add a photo of the product')
-            // }
         }
         const createdItem = await itemService.createItem(newItem, userId);
         setTimeout(() => {
@@ -81,16 +78,26 @@ const getItem = async (req, res, next) => {
     try {
         const { itemId, userId } = req.params;
         const item = await itemService.getItem(itemId, userId);
+        console.log("🚀 ~ getItem ~ item:", item)
         res.json(item);
     } catch (error) {
         next(error);
     }
 };
 
+const updateItem = async (req, res, next) => {
+    try {
+        res.json('test');
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getItems,
     addItem,
     toggleFavorite,
     deleteItem,
-    getItem
+    getItem,
+    updateItem,
 }
