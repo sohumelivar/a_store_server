@@ -6,10 +6,11 @@ const multerErrorHandler = require('../middlewares/multer-error-middleware');
 const authMiddleware = require('../middlewares/auth-middleware');
 
 router.post('/addItem', authMiddleware, uploadItemPhoto.array('photo', 5), multerErrorHandler, itemsController.addItem);
+router.get('/itemsAuth', authMiddleware, itemsController.getItemsWithUser);
 router.get('/items', itemsController.getItems);
 router.post('/toggleFavorite', authMiddleware, itemsController.toggleFavorite);
 router.post('/deleteItem', authMiddleware, itemsController.deleteItem);
-router.get('/getItem/:itemId/:userId', itemsController.getItem);
+router.get('/getItem/:itemId/:userId', authMiddleware, itemsController.getItem);
 router.put('/update/:id', itemsController.updateItem);
 
 module.exports = router;

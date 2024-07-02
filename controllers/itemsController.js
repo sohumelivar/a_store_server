@@ -7,14 +7,21 @@ const getItems = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const pageSize = 2;
-        const authHeader = req.headers.authorization;
-        if (authHeader) {
-            const token = authHeader.split(' ')[1];
-            const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-            const itemsData = await itemService.getUserItems(page, pageSize, userData.id);
-            return res.json(itemsData);
-        }
         const itemsData = await itemService.getItems(page, pageSize);
+        return res.json(itemsData);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getItemsWithUser = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 2;
+        const authHeader = req.headers.authorization;
+        const token = authHeader.split(' ')[1];
+        const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+        const itemsData = await itemService.getUserItems(page, pageSize, userData.id);
         return res.json(itemsData);
     } catch (error) {
         next(error);
@@ -95,6 +102,7 @@ const updateItem = async (req, res, next) => {
 
 module.exports = {
     getItems,
+    getItemsWithUser,
     addItem,
     toggleFavorite,
     deleteItem,
