@@ -7,20 +7,20 @@ module.exports = function (req, res, next) {
         console.log('authorizationHeader --- >>> ', authorizationHeader);
         if (!authorizationHeader) {
             console.log('tut 0 -------- >>>');
-            // return res.sendStatus(401);
-            throw ApiError.BadRequest('No access')
+            return res.sendStatus(401);
+            // throw ApiError.BadRequest('No access')
         }
         const accessToken = authorizationHeader.split(' ')[1];
         if (!accessToken) {
             console.log('tut 1 -------- >>>');
-            // return res.sendStatus(401);
-            throw ApiError.BadRequest('No access')
+            return res.sendStatus(401);
+            // throw ApiError.BadRequest('No access')
         }
         const userData = tokenService.validateAccessToken(accessToken);
         if (!userData) {
             console.log('tut 2 -------- >>>');
-            // return res.sendStatus(401);
-            throw ApiError.BadRequest('No access')
+            return res.sendStatus(401);
+            // throw ApiError.BadRequest('No access')
         }
         req.user = userData;
         next();
