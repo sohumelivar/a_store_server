@@ -31,8 +31,33 @@ const addItemSchema = Joi.object({
   })
 });
 
+const editItemSchema = Joi.object({
+  itemName: Joi.string().required().messages({
+      'string.empty': 'Item name is required'
+  }),
+  category: Joi.string().required().messages({
+      'string.empty': 'Category is required'
+  }),
+  description: Joi.string().required().messages({
+      'string.empty': 'Description is required'
+  }),
+  price: Joi.number().required().messages({
+      'number.base': 'Price must be a number',
+      'any.required': 'Price is required'
+  }),
+  userId: Joi.number().required().messages({
+      'number.base': 'User ID must be a number',
+      'any.required': 'User ID is required'
+  }), 
+  deletedPhotos: Joi.array().items(Joi.string()).default([]).messages({
+    'array.base': 'Deleted photos must be an array',
+    'string.base': 'Each photo must be a string'
+  }),
+});
+
 module.exports = { 
   registrationSchema, 
-  addItemSchema 
+  addItemSchema,
+  editItemSchema,
 };
 
