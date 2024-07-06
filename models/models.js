@@ -8,10 +8,11 @@ const User = sequelize.define('user', {
     isActivated: { type: DataTypes.BOOLEAN, defaultValue: false},
     activationLink: { type: DataTypes.STRING },
     password: { type: DataTypes.STRING, allowNull: false },
-    first: { type: DataTypes.STRING },
+    firstname: { type: DataTypes.STRING },
     lastname: { type: DataTypes.STRING },
     age: { type: DataTypes.INTEGER },
-    avatar: { type: DataTypes.STRING}
+    avatar: { type: DataTypes.STRING},
+    lastActivity: { type: DataTypes.DATE, allowNull: true, defaultValue: null},
 });
 
 const Token = sequelize.define('token', {

@@ -6,6 +6,7 @@ const path = require('path');
 const router = require('./routes/index');
 const sequelize = require('./db');
 const errorMiddleware = require('./middlewares/error-middleware');
+require('./utils/checkActivity');
 
 const PORT = process.env.PORT || 6000;
 
