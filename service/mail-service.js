@@ -31,6 +31,22 @@ const sendActivationMail = async (to, link) => {
     });
 };
 
+const checkActivityMail = async (to) => {
+    const transporter = createTransporter();
+    await transporter.sendMail({
+        from: process.env.YA_USER,
+        to,
+        subject: `We miss you!`,
+        html: `
+            <div>
+                <h1>It has been a while since you last visited us</h1>
+                <a href="${process.env.CLIENT_URL}">${process.env.CLIENT_URL}</a>
+            </div>
+        `
+    });
+};
+
 module.exports = {
-    sendActivationMail
+    sendActivationMail,
+    checkActivityMail,
 };

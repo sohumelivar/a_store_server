@@ -1,5 +1,6 @@
 const { User } = require('../models/models');
 const userService = require('../service/user-service');
+const userActivity = require('../service/user-activity');
 const { filterEmptyFields } = require('../utils/filterEmptyFields');
 const ApiError = require('../exceptions/api-error');
 const { registrationSchema } = require('../utils/validation');
@@ -74,18 +75,15 @@ const users = async (req, res, next) => {
     }
 }
 
-const test = async (req, res) => {
+const updateUserActivity = (req, res, next) => {
     try {
-        const { username, email, password } = req.body;
-        const user = await User.findOne({where: {username}});
-        const headers = req.get('Authorization');
-        setTimeout(() => {
-            return res.json({id:1, username: 'test'});
-        }, 1000)
+        const userId = req.params.id;
+        userActivity.updateUserActivity(userId);
+        res.sendStatus(200).json({ message: 'Last activity updated successfully' });;
     } catch (error) {
-    console.log('⚛ --- ⚛ --- ⚛ --- ⚛ ---  >>> ☢ UserController ☢ test ☢ error:', error)
+        next(error);
     }
-}
+};
 
 module.exports = {
     registration,
@@ -94,5 +92,5 @@ module.exports = {
     activate,
     refresh,
     users,
-    test,
+    updateUserActivity,
 }
