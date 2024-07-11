@@ -85,6 +85,24 @@ const updateUserActivity = (req, res, next) => {
     }
 };
 
+const getProfile = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await userService.getProfile(userId);
+        return res.json(user);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const updateProfile = async ( req, res, next) => {
+    try {
+        return res.json('test update profile');
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     registration,
     login,
@@ -93,4 +111,6 @@ module.exports = {
     refresh,
     users,
     updateUserActivity,
+    getProfile,
+    updateProfile
 }
