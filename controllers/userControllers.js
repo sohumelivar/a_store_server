@@ -1,9 +1,11 @@
 const { User } = require('../models/models');
 const userService = require('../service/user-service');
+const mailService = require('../service/mail-service');
 const userActivity = require('../service/user-activity');
 const { filterEmptyFields } = require('../utils/filterEmptyFields');
+const uuid = require('uuid');
 const ApiError = require('../exceptions/api-error');
-const { registrationSchema } = require('../utils/validation');
+const { registrationSchema, profileSchema } = require('../utils/validation');
 
 const registration = async (req, res, next) => {
     try {
@@ -97,7 +99,33 @@ const getProfile = async (req, res, next) => {
 
 const updateProfile = async ( req, res, next) => {
     try {
-        return res.json('test update profile');
+        const { error } = profileSchema.validate(req.body);
+        if (error) {
+        throw ApiError.BadRequest('Validation error', error.details[0].message);
+        }
+        const { id } = req.params;
+        const user = await User.findByPk(id);
+        if (!user) {
+            throw ApiError.BadRequest('User not found');
+        }
+        if (req.file) {
+            user.avatar = req.file.filename;
+        }
+        const { username, email, firstname, lastname, age } = req.body;
+        if (user.email !== email) {
+            user.isActivated = false;
+            user.email = email;
+            const activationLink = uuid.v4();
+            user.activationLink = activationLink;
+            await mailService.sendActivationMail(email, `${process.env.SERVER_URL}/api/user/activate/${activationLink}`);
+        }
+        user.username = username;
+        user.email = email;
+        user.firstname = firstname;
+        user.lastname = lastname;
+        user.age = age;
+        await user.save();
+        return res.json(user);
     } catch (error) {
         next(error);
     }

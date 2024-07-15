@@ -55,9 +55,32 @@ const editItemSchema = Joi.object({
   }),
 });
 
+const profileSchema = Joi.object({
+  username: Joi.string().required().messages({
+    'string.empty': 'Username is required',
+  }),
+  email: Joi.string().email().required().messages({
+    'string.empty': 'Email is required',
+    'string.email': 'Email must be a valid email address',
+  }),
+  firstname: Joi.string().required().messages({
+    'string.empty': 'First name is required',
+  }),
+  lastname: Joi.string().required().messages({
+    'string.empty': 'Last name is required',
+  }),
+  age: Joi.number().required().messages({
+    'number.base': 'Age must be a number',
+    'any.required': 'Age is required',
+  }),
+  avatar: Joi.string().allow(null, ''), // Аватар может быть пустым или null
+});
+
+
 module.exports = { 
   registrationSchema, 
   addItemSchema,
   editItemSchema,
+  profileSchema,
 };
 
