@@ -155,8 +155,21 @@ const updateItem = async (req, res, next) => {
     } catch (error) {
         next(error);
     }
+
+    
 };
 
+const getUserItems = async (req, res, next) => {
+    try {
+        const { userId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 2; 
+        const itemsData = await itemService.getUserItemsProfile(page, pageSize, userId);
+        return res.json(itemsData);
+    } catch (error) {
+        next(error);
+    }
+}
 
 module.exports = {
     getItems,
@@ -166,4 +179,5 @@ module.exports = {
     deleteItem,
     getItem,
     updateItem,
+    getUserItems,
 }

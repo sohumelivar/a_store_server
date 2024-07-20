@@ -12,5 +12,6 @@ router.post('/toggleFavorite', authMiddleware, itemsController.toggleFavorite);
 router.post('/deleteItem', authMiddleware, itemsController.deleteItem);
 router.get('/getItem/:itemId/:userId', authMiddleware, itemsController.getItem);
 router.put('/update/:id', authMiddleware, uploadItemPhoto.array('photo', 5), multerErrorHandler, itemsController.updateItem);
+router.get('/userItems/:userId', authMiddleware, itemsController.getUserItems);
 
 module.exports = router;
