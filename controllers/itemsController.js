@@ -48,7 +48,6 @@ const addItem = async (req, res, next) => {
         if (req.files.length === 0) {
             throw ApiError.BadRequest('You must add a photo of the product')
         }
-        console.log('req.files !!! ___ ', req.files);
         if (req.files) {
             const photos = req.files.map(file => file.filename);
             newItem.photos = photos;
@@ -85,10 +84,20 @@ const deleteItem = async (req, res, next) => {
     }
 }
 
-const getItem = async (req, res, next) => {
+const getItemAuth = async (req, res, next) => {
     try {
         const { itemId, userId } = req.params;
-        const item = await itemService.getItem(itemId, userId);
+        const item = await itemService.getItemAuth(itemId, userId);
+        res.json(item);
+    } catch (error) {
+        next(error);
+    }
+};
+
+const getItem = async (req, res, next) => {
+    try {
+        const { itemId } = req.params;
+        const item = await itemService.getItem(itemId);
         res.json(item);
     } catch (error) {
         next(error);
@@ -121,7 +130,7 @@ const updateItem = async (req, res, next) => {
         item.category = category;
         item.description = description;
         item.price = price;
-        if (item.photos.length === deletedPhotos.length) {
+        if (item.photos.length === deletedPhotos.length && !req.files) {
             throw ApiError.BadRequest('Cant delete all photos');
         }
 
@@ -177,6 +186,7 @@ module.exports = {
     addItem,
     toggleFavorite,
     deleteItem,
+    getItemAuth,
     getItem,
     updateItem,
     getUserItems,
