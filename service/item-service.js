@@ -1,4 +1,4 @@
-const { Items, Favorite, OnEdit } = require("../models/models");
+const { Items, Favorite, OnEdit, User } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
 
 const createItem = async (newItem, userId) => {
@@ -13,6 +13,12 @@ const getItems = async (page, pageSize) => {
         offset,
         limit: pageSize,
         order: [['createdAt', 'DESC']],
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
+            }
+        ]
     });
 
     return {
@@ -39,6 +45,10 @@ const getUserItems = async (page, pageSize, userId) => {
                 attributes: ['userId'],
                 required: false,
                 where: { userId: userId }
+            },
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
             }
         ]
     });
@@ -90,6 +100,10 @@ const getItemAuth = async (itemId, userId) => {
                 attributes: ['userId'],
                 required: false, 
                 where: { userId: userId }
+            },
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
             }
         ]
     });
@@ -107,7 +121,15 @@ const getItemAuth = async (itemId, userId) => {
 
 
 const getItem = async (itemId, userId) => {
-    const item = await Items.findOne({ where: { id: itemId } });
+    const item = await Items.findOne({ 
+        where: { id: itemId },
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
+            }
+        ]
+    });
     if (!item) {
         throw ApiError.BadRequest('Item not found');
     }
@@ -133,6 +155,10 @@ const getUserItemsProfile = async (page, pageSize, userId) => {
                 attributes: ['userId'],
                 required: false,
                 where: { userId: userId }
+            },
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
             }
         ]
     });
