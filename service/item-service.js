@@ -75,8 +75,39 @@ const deleteItem = async (itemId, userId) => {
     return deleteItem;
 }
 
+const getItemAuth = async (itemId, userId) => {
+    const item = await Items.findOne({
+        where: { id: itemId },
+        include: [
+            {
+                model: OnEdit,
+                attributes: ['userId'],
+                required: false,
+                where: { userId: userId }
+            },
+            {
+                model: Favorite,
+                attributes: ['userId'],
+                required: false, 
+                where: { userId: userId }
+            }
+        ]
+    });
+    
+    if (!item) {
+        throw ApiError.BadRequest('Item not found');
+    }
+
+    const plainItem = item.get({ plain: true });
+    plainItem.isFavorite = item.favorites && item.favorites.length > 0;
+    plainItem.onEdit = item.onEdits && item.onEdits.length > 0;
+
+    return plainItem;
+};
+
+
 const getItem = async (itemId, userId) => {
-    const item = await Items.findOne({ where: { id: itemId, userId } });
+    const item = await Items.findOne({ where: { id: itemId } });
     if (!item) {
         throw ApiError.BadRequest('Item not found');
     }
@@ -124,6 +155,7 @@ module.exports = {
     toggleFavorite,
     getUserItems,
     deleteItem,
+    getItemAuth,
     getItem,
     getUserItemsProfile,
 }

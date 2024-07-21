@@ -62,7 +62,7 @@ const refresh = async (req, res, next) => {
         const {refreshToken} = req.cookies;
         const userData = await userService.refresh(refreshToken);
         res.cookie('refreshToken', userData.refreshToken, {maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true});
-        return res.json(userData);
+        return res.json({user: userData.user, accessToken: userData.accessToken});
     } catch (error) {
         next(error);
     }
