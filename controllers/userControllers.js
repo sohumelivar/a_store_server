@@ -125,7 +125,15 @@ const updateProfile = async ( req, res, next) => {
         user.lastname = lastname;
         user.age = age;
         await user.save();
-        return res.json(user);
+        const userData = {
+            username,
+            email,
+            firstname,
+            lastname,
+            age,
+            avatar: req.file ? req.file.filename : user.avatar
+        }
+        return res.json(userData);
     } catch (error) {
         next(error);
     }
