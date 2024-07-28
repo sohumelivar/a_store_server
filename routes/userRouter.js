@@ -12,6 +12,7 @@ router.get('/refresh', userController.refresh);
 router.get('/users', authMiddleware, userController.users);
 router.put('/updateUserActivity/:id', authMiddleware, userController.updateUserActivity);
 router.get('/profile/:id', authMiddleware, userController.getProfile);
+router.get('/viewUserProfile/:id', userController.viewUserProfile);
 router.put('/updateProfile/:id', authMiddleware, upload.single('avatar'), userController.updateProfile);
 
 module.exports = router;

@@ -180,6 +180,18 @@ const getUserItems = async (req, res, next) => {
     }
 }
 
+const getViewUserItems = async (req, res, next) => {
+    try {
+        const { viewUserId }  = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const pageSize = 2;
+        const itemsData = await itemService.getViewUserItems(page, pageSize, viewUserId);
+        return res.json(itemsData);
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     getItems,
     getItemsWithUser,
@@ -190,4 +202,5 @@ module.exports = {
     getItem,
     updateItem,
     getUserItems,
+    getViewUserItems,
 }

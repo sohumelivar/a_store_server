@@ -97,6 +97,16 @@ const getProfile = async (req, res, next) => {
     }
 }
 
+const viewUserProfile = async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+        const user = await userService.viewUserProfile(userId);
+        return res.json(user);
+    } catch (error) {
+        next(error);
+    }
+}
+
 const updateProfile = async ( req, res, next) => {
     try {
         const { error } = profileSchema.validate(req.body);
@@ -148,5 +158,6 @@ module.exports = {
     users,
     updateUserActivity,
     getProfile,
-    updateProfile
+    updateProfile,
+    viewUserProfile,
 }

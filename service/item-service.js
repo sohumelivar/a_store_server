@@ -175,6 +175,27 @@ const getUserItemsProfile = async (page, pageSize, userId) => {
     };
 };
 
+const getViewUserItems = async (page, pageSize, viewUserId) => {
+    const offset = (page - 1) * pageSize;
+    const { count, rows } = await Items.findAndCountAll({
+        where: { userId: viewUserId },
+        offset,
+        limit: pageSize,
+        order: [['createdAt', 'DESC']],
+        include: [
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
+            }
+        ]
+    });
+
+    return {
+        items: rows,
+        totalPages: Math.ceil(count / pageSize),
+    };
+}
+
 module.exports = {
     createItem,
     getItems,
@@ -184,4 +205,5 @@ module.exports = {
     getItemAuth,
     getItem,
     getUserItemsProfile,
+    getViewUserItems,
 }
