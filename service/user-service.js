@@ -80,6 +80,21 @@ const getProfile = async (id) => {
     return user;
 }
 
+const viewUserProfile = async (id) => {
+    const userInfo = await User.findByPk(id);
+    if (!userInfo) {
+        throw ApiError.BadRequest('User is not found');
+    }
+    const user = {
+        username: userInfo.username,
+        firstname: userInfo.firstname,
+        lastname: userInfo.lastname,
+        age: userInfo.age,
+        avatar: userInfo.avatar,
+    }
+    return user;
+}
+
 module.exports = {
     registration,
     activate,
@@ -87,5 +102,6 @@ module.exports = {
     logout,
     refresh,
     getProfile,
+    viewUserProfile,
 }
 
