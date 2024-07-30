@@ -192,6 +192,19 @@ const getViewUserItems = async (req, res, next) => {
     }
 };
 
+const getFavorites = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const { userId } = req.params;
+        const pageSize = 2;
+        const favoritesData = await itemService.getFavorites(page, pageSize, userId);
+        console.log("🚀 ~ getFavorites ~ favoritesData:", favoritesData)
+        return res.json(favoritesData);
+    } catch (error) {
+        next(error);
+    }
+}
+
 module.exports = {
     getItems,
     getItemsWithUser,
@@ -203,4 +216,5 @@ module.exports = {
     updateItem,
     getUserItems,
     getViewUserItems,
+    getFavorites,
 }
