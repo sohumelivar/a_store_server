@@ -15,5 +15,6 @@ router.get('/getItem/:itemId', itemsController.getItem);
 router.put('/update/:id', authMiddleware, uploadItemPhoto.array('photo', 5), multerErrorHandler, itemsController.updateItem);
 router.get('/userItems/:userId', authMiddleware, itemsController.getUserItems);
 router.get('/:viewUserId/viewUserItems', itemsController.getViewUserItems);
+router.get('/:userId/getFavorites', itemsController.getFavorites);
 
 module.exports = router;

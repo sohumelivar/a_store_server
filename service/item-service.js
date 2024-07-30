@@ -196,6 +196,44 @@ const getViewUserItems = async (page, pageSize, viewUserId) => {
     };
 }
 
+const getFavorites = async (page, pageSize, userId) => {
+    const offset = (page - 1) * pageSize;
+    const { count, rows } = await Items.findAndCountAll({
+        offset,
+        limit: pageSize,
+        order: [['createdAt', 'DESC']],
+        include: [
+            {
+                model: Favorite,
+                attributes: ['userId'],
+                required: true,
+                where: { userId: userId }
+            },
+            {
+                model: OnEdit,
+                attributes: ['userId'],
+                required: false,
+                where: { userId: userId }
+            },
+            {
+                model: User,
+                attributes: ['id', 'username', 'avatar'],
+            }
+        ]
+    });
+
+    const items = rows.map(item => ({
+        ...item.get({ plain: true }),
+        isFavorite: item.favorites && item.favorites.length > 0,
+        onEdit: item.onEdits && item.onEdits.length > 0
+    }));
+
+    return {
+        items: items,
+        totalPages: Math.ceil(count / pageSize),
+    };
+};
+
 module.exports = {
     createItem,
     getItems,
@@ -206,4 +244,5 @@ module.exports = {
     getItem,
     getUserItemsProfile,
     getViewUserItems,
+    getFavorites,
 }
