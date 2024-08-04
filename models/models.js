@@ -23,7 +23,6 @@ const Token = sequelize.define('token', {
 const Items = sequelize.define('items', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
     itemName: { type: DataTypes.STRING },
-    category: { type: DataTypes.STRING },
     description: { type: DataTypes.STRING },
     price: { type: DataTypes.STRING },
     photos: { type: DataTypes.ARRAY(DataTypes.STRING) },
@@ -36,6 +35,11 @@ const Favorite = sequelize.define('favorite', {
 const OnEdit = sequelize.define('onEdit', {
     id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true}
 });
+
+const Category = sequelize.define('category', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true},
+    name: { type: DataTypes.STRING, allowNull: false, unique: true, }
+})
 
 User.hasMany(Items);
 Items.belongsTo(User);
@@ -53,7 +57,9 @@ User.hasOne(Token, {
 Token.belongsTo(User, {
     foreignKey: 'userId',
 });
+Category.hasMany(Items);
+Items.belongsTo(Category);
 
 
 
-module.exports = { User, Items, Favorite, OnEdit, Token };
+module.exports = { User, Items, Favorite, OnEdit, Token, Category };
