@@ -2,7 +2,7 @@ const { addItemSchema, editItemSchema } = require('../utils/validation');
 const ApiError = require('../exceptions/api-error');
 const itemService = require('../service/item-service');
 const jwt = require('jsonwebtoken');
-const { Items } = require("../models/models");
+const { Items, Category } = require("../models/models");
 const fs = require('fs');
 const path = require('path');
 
@@ -126,14 +126,24 @@ const updateItem = async (req, res, next) => {
             throw ApiError.BadRequest('You do not have permission to update this item');
         }
 
+        const categoryRecord = await Category.findOne({ where: { name: category } });
+        if (!categoryRecord) {
+            throw ApiError.BadRequest('Category not found');
+        }
+
         item.itemName = itemName;
-        item.category = category;
+        item.categoryId = categoryRecord.id;
         item.description = description;
         item.price = price;
+
         if (item.photos.length === deletedPhotos.length && !req.files) {
             throw ApiError.BadRequest('Cant delete all photos');
         }
 
+        if (item.photos.length === deletedPhotos.length && req.files.length < 1) {
+            throw ApiError.BadRequest('Cant delete all photos');
+        }
+        
         if (deletedPhotos && Array.isArray(deletedPhotos)) {
             deletedPhotos.forEach(photo => {
                 const photoPath = path.join(__dirname, 'itemsPhotos', photo);
@@ -144,7 +154,7 @@ const updateItem = async (req, res, next) => {
             });
         }
 
-        if (req.files) {
+        if (req.files.length > 0) {
             req.files.forEach(file => {
                 item.photos.push(file.filename);
             });
@@ -152,7 +162,7 @@ const updateItem = async (req, res, next) => {
         
         const updatedItem = await Items.update({
             itemName,
-            category,
+            categoryId: categoryRecord.id,
             description,
             price,
             photos: item.photos
@@ -198,8 +208,16 @@ const getFavorites = async (req, res, next) => {
         const { userId } = req.params;
         const pageSize = 2;
         const favoritesData = await itemService.getFavorites(page, pageSize, userId);
-        console.log("🚀 ~ getFavorites ~ favoritesData:", favoritesData)
         return res.json(favoritesData);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const getCategories = async (req, res, next) => {
+    try {
+        const categories = await Category.findAll();
+        res.json(categories);
     } catch (error) {
         next(error);
     }
@@ -217,4 +235,5 @@ module.exports = {
     getUserItems,
     getViewUserItems,
     getFavorites,
+    getCategories,
 }

@@ -1,11 +1,27 @@
-const { Items, Favorite, OnEdit, User } = require("../models/models");
+const { Items, Favorite, OnEdit, User, Category } = require("../models/models");
 const ApiError = require("../exceptions/api-error");
+const sequelize = require('../db');
 
 const createItem = async (newItem, userId) => {
-    const createdItem = await Items.create(newItem);
-    await OnEdit.create({userId, itemId: createdItem.id })
-    return {newItem: createdItem};
-}
+    const transaction = await sequelize.transaction();
+    try {
+        const category = await Category.findOne({ where: { name: newItem.category }, transaction });
+        if (!category) {
+            throw new Error('Категория не найдена');
+        }
+        const createdItem = await Items.create({
+            ...newItem,
+            categoryId: category.id,
+        }, { transaction });
+        await OnEdit.create({ userId, itemId: createdItem.id }, { transaction });
+        await transaction.commit();
+        return { newItem: createdItem };
+    } catch (error) {
+        await transaction.rollback();
+        throw error;
+    }
+};
+
 
 const getItems = async (page, pageSize) => {
     const offset = (page - 1) * pageSize;
@@ -17,7 +33,11 @@ const getItems = async (page, pageSize) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
 
@@ -49,7 +69,11 @@ const getUserItems = async (page, pageSize, userId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
 
@@ -104,7 +128,11 @@ const getItemAuth = async (itemId, userId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
     
@@ -127,7 +155,11 @@ const getItem = async (itemId, userId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
     if (!item) {
@@ -159,7 +191,11 @@ const getUserItemsProfile = async (page, pageSize, userId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
 
@@ -218,7 +254,11 @@ const getFavorites = async (page, pageSize, userId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
 
