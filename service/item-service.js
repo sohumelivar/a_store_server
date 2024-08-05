@@ -222,7 +222,11 @@ const getViewUserItems = async (page, pageSize, viewUserId) => {
             {
                 model: User,
                 attributes: ['id', 'username', 'avatar'],
-            }
+            },
+            {
+                model: Category,
+                attributes: ['id', 'name'],
+            },
         ]
     });
 
